@@ -3,7 +3,14 @@ Run it via docker compose - you can do that easily from visual studio
 
 for easy testing purpose, I have included the appsettings.json file - I won't include it normally
 
-Logs are written to Seq - the credentials are: url: http://localhost:8081/#/login username: admin  password Passw@rd123
+Logs are written to Seq - the credentials are: 
+
+url: http://localhost:8081/#/login 
+
+username: admin  
+
+password Passw@rd123
+
 
 Note: I seeded Two default users for testing purpose. Their login credentials are below
 
@@ -20,7 +27,7 @@ User 2: email: victorblaze2010@gmail.com  password: 123Pa$$word!
 
 -Hangfire for handling backround jobs
 
--SignalR - uses authenticated SignalR conenctions to send notifications to specific authenticated users
+-SignalR - I added authentication to make sure messages are sent to specific users, rather than a general broadcast
 
 -Caching using Memory Cache
 
