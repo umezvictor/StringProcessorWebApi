@@ -1,5 +1,6 @@
 To run this app, clone it and run it with your prefered editor, eg Visual Studio
 Run it via docker compose - you can do that easily from visual studio
+
 for easy testing purpose, I have included the appsettings.json file - won't be there in a normal production codebase
 
 Logs are written to Seq - the credentials are: url: http://localhost:8081/#/login username: admin  password Passw@rd123
