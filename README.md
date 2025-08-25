@@ -25,6 +25,8 @@ User 2: email: victorblaze2010@gmail.com  password: 123Pa$$word!
 
 -Clean Architecture
 
+-CQRS
+
 -Hangfire for handling backround jobs
 
 -SignalR - I added authentication to make sure messages are sent to specific users, rather than a general broadcast
@@ -32,6 +34,8 @@ User 2: email: victorblaze2010@gmail.com  password: 123Pa$$word!
 -Caching using Memory Cache
 
 -Seq/Serilog for logging
+
+-Fluent Validation
 
 -Entity Framework Core
 
