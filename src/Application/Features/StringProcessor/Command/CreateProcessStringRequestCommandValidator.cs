@@ -10,7 +10,8 @@ namespace Application.Features.StringProcessor.Command
             RuleFor(p => p.Input)
             .NotEmpty()
             .NotNull()
-            .WithMessage("Enter a valid input string");
+            .MinimumLength(2)
+            .MaximumLength(50);
         }
 
     }
