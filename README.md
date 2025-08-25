@@ -3,7 +3,14 @@ Run it via docker compose - you can do that easily from visual studio
 
 for easy testing purpose, I have included the appsettings.json file - I won't include it normally
 
-Logs are written to Seq - the credentials are: url: http://localhost:8081/#/login username: admin  password Passw@rd123
+Logs are written to Seq - the credentials are: 
+
+url: http://localhost:8081/#/login 
+
+username: admin  
+
+password Passw@rd123
+
 
 Note: I seeded Two default users for testing purpose. Their login credentials are below
 
