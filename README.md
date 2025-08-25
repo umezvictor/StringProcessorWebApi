@@ -42,4 +42,6 @@ User 2: email: victorblaze2010@gmail.com  password: 123Pa$$word!
 
 -CORS
 
+-Global error handling + Problem Details
+
 happy testing.
