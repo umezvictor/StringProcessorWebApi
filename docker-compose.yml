@@ -1,0 +1,48 @@
+services:
+  webly:
+    image: ${DOCKER_REGISTRY-}webly
+    container_name: webly
+    build:
+      context: .
+      dockerfile: src/API/Dockerfile
+    ports:
+      - 5000:8080
+      - 5001:8081
+    depends_on:
+     - sqlserver
+    environment:
+     - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+     - app-network
+    restart: on-failure
+
+  sqlserver: 
+    image: mcr.microsoft.com/mssql/server:2022-latest 
+    environment:
+      SA_PASSWORD: "Passw@rd123"
+      ACCEPT_EULA: "Y"        
+    ports:
+      - 1433:1433
+    volumes:
+     - sqlvolume:/var/opt/mssql 
+    networks:
+      - app-network
+
+  seq:
+    image: datalust/seq:latest
+    container_name: seq
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_ADMINPASSWORD=Passw@rd123
+    ports:
+      - 8081:80
+    networks:
+      - app-network
+
+networks:
+  app-network:
+
+volumes:
+  sqlvolume:
+  
+    
