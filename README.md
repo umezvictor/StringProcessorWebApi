@@ -11,18 +11,31 @@ User 2: email: victorblaze2010@gmail.com  password: 123Pa$$word!
 #The architecture/Setup for this api includes
 
 -.NET 8
+
 -Clean Architecture
+
 -Hangfire for handling backround jobs
+
 -SignalR - uses authenticated SignalR conenctions to send notifications to specific authenticated users
+
 -Caching using Memory Cache
+
 -Seq/Serilog for logging
+
 -Entity Framework Core
+
 -MSSQL
+
 -Docker 
+
 -Unit Tests
+
 -Architecture Tests
+
 -Rate Limiting
+
 -JWT Authentication/Authorization
+
 -CORS
 
 happy testing.
