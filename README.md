@@ -8,7 +8,7 @@ User 1: email: victorblaze@gmail.com  password: 123Pa$$word!
 User 2: email: victorblaze2010@gmail.com  password: 123Pa$$word!
 
 
-The architecture/Setup for this api includes
+#The architecture/Setup for this api includes
 
 -.NET 8
 -Clean Architecture
