@@ -4,7 +4,9 @@ for easy testing purpose, I have included the appsettings.json file - won't be t
 Logs are written to Seq - the credentials are: url: http://localhost:8081/#/login username: admin  password Passw@rd123
 
 Note: I seeded Two default users for testing purpose. Their login credentials are below
+
 User 1: email: victorblaze@gmail.com  password: 123Pa$$word!
+
 User 2: email: victorblaze2010@gmail.com  password: 123Pa$$word!
 
 
