@@ -6,7 +6,6 @@
     using Microsoft.AspNetCore.SignalR;
     using Microsoft.Extensions.Logging;
     using Moq;
-    using Shared.Enums;
     using System.Threading;
     using System.Threading.Tasks;
     using Webly.Jobs;
@@ -42,20 +41,20 @@
             _mockStringProcessor.Setup(sp => sp.ProcessString("Hello World"))
                                 .Returns("Processed string");
 
-            _mockHubContext.Setup(x => x.Clients.User(userId).ReceiveNotification(JobStatusTypes.PROCESSING_STARTED.ToString()));
+            _mockHubContext.Setup(x => x.Clients.User(userId).MessageLength(It.IsAny<int>()));
             _mockHubContext.Setup(x => x.Clients.User(userId).ReceiveNotification(It.IsAny<string>()));
             request.IsCompleted = true;
             repositoryMock.Setup(x => x.UpdateAsync(request, cancellationToken));
 
-            _mockHubContext.Setup(x => x.Clients.User(userId).ReceiveNotification(JobStatusTypes.PROCESSING_COMPLETED.ToString()));
+            _mockHubContext.Setup(x => x.Clients.User(userId).ProcessingCompleted());
 
 
             // Act
             await _serviceToTest.ExecuteAsync(userId, cancellationToken);
 
             // Assert
-            _mockHubContext.Verify(x => x.Clients.User(userId).ReceiveNotification(JobStatusTypes.PROCESSING_STARTED.ToString()), Times.Once);
-            _mockHubContext.Verify(x => x.Clients.User(userId).ReceiveNotification(JobStatusTypes.PROCESSING_COMPLETED.ToString()), Times.Once);
+            _mockHubContext.Verify(x => x.Clients.User(userId).MessageLength(It.IsAny<int>()), Times.Once);
+            _mockHubContext.Verify(x => x.Clients.User(userId).ProcessingCompleted(), Times.Once);
 
         }
 
@@ -75,19 +74,21 @@
             _mockStringProcessor.Setup(sp => sp.ProcessString("Hello World"))
                                 .Returns("Processed string");
 
-            _mockHubContext.Setup(x => x.Clients.User(userId).ReceiveNotification(JobStatusTypes.PROCESSING_STARTED.ToString()));
+            _mockHubContext.Setup(x => x.Clients.User(userId).MessageLength(It.IsAny<int>()));
             _mockHubContext.Setup(x => x.Clients.User(userId).ReceiveNotification(It.IsAny<string>()));
+            _mockHubContext.Setup(x => x.Clients.User(userId).ProcessingCancelled());
+
             request.IsCompleted = true;
             repositoryMock.Setup(x => x.UpdateAsync(request, cancellationToken));
 
-            _mockHubContext.Setup(x => x.Clients.User(userId).ReceiveNotification(JobStatusTypes.PROCESSING_CANCELLED.ToString()));
+
 
 
             // Act
             await _serviceToTest.ExecuteAsync(userId, cancellationToken);
 
             // Assert
-            _mockHubContext.Verify(x => x.Clients.User(userId).ReceiveNotification(JobStatusTypes.PROCESSING_CANCELLED.ToString()), Times.Once);
+            _mockHubContext.Verify(x => x.Clients.User(userId).ProcessingCancelled(), Times.Once);
 
         }
     }

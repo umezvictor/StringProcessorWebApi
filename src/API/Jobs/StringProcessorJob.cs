@@ -2,7 +2,6 @@
 using Application.Abstractions.Services;
 using Hangfire;
 using Microsoft.AspNetCore.SignalR;
-using Shared.Enums;
 using Webly.SignalRHub;
 
 namespace Webly.Jobs
@@ -17,7 +16,6 @@ namespace Webly.Jobs
 
             try
             {
-                await hubContext.Clients.User(userId).ReceiveNotification(JobStatusTypes.PROCESSING_STARTED.ToString());
 
                 var request = await processStringRequestRepository.GetUnCompletedRequestByUserIdAsync(userId, cancellationToken);
 
@@ -26,6 +24,8 @@ namespace Webly.Jobs
                     string processedString = stringProcessor.ProcessString(request.InputString);
                     if (!string.IsNullOrEmpty(processedString))
                     {
+                        await hubContext.Clients.User(userId).MessageLength(processedString.Length);
+
                         foreach (char character in processedString)
                         {
                             cancellationToken.ThrowIfCancellationRequested();
@@ -36,7 +36,7 @@ namespace Webly.Jobs
                         await processStringRequestRepository.UpdateAsync(request, cancellationToken);
 
                         logger.LogInformation("Processing completed");
-                        await hubContext.Clients.User(userId).ReceiveNotification(JobStatusTypes.PROCESSING_COMPLETED.ToString());
+                        await hubContext.Clients.User(userId).ProcessingCompleted();
 
                     }
                 }
@@ -45,7 +45,7 @@ namespace Webly.Jobs
             catch (OperationCanceledException)
             {
                 logger.LogInformation("User cancelled the operation");
-                await hubContext.Clients.User(userId).ReceiveNotification(JobStatusTypes.PROCESSING_CANCELLED.ToString());
+                await hubContext.Clients.User(userId).ProcessingCancelled();
 
             }
         }

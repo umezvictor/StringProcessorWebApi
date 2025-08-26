@@ -1,6 +1,5 @@
 ﻿using Hangfire;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.SignalR;
 using Shared;
 using System.Diagnostics;
 using System.Threading.RateLimiting;
@@ -55,7 +54,6 @@ namespace Webly
             services.AddTransient<StringProcessorJob>();
 
             services.AddSignalR();
-            services.AddSingleton<IUserIdProvider, DefaultUserIdProvider>();
 
             return services;
         }
