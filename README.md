@@ -29,7 +29,7 @@ User 2: email: victorblaze2010@gmail.com  password: 123Pa$$word!
 
 -Hangfire for handling backround jobs
 
--SignalR - I added authentication to make sure messages are sent to specific users, rather than a general broadcast
+-SignalR - used strongly typed hubs, JWT Authentication to make sure messages are sent to specific users
 
 -Caching using Memory Cache
 
