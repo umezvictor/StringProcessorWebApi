@@ -2,6 +2,7 @@
 using Application.Abstractions.Data;
 using Application.Abstractions.Services;
 using Application.Authentication;
+using Application.Idempotency;
 using Domain.Users;
 using Infrastructure.Authentication;
 using Infrastructure.Database;
@@ -99,6 +100,7 @@ namespace Infrastructure
         private static IServiceCollection AddServices(this IServiceCollection services)
         {
 
+            services.AddScoped<IIdempotencyService, IdempotencyService>();
             services.AddScoped<IStringProcessor, StringProcessor>();
 
             return services;

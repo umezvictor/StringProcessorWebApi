@@ -52,6 +52,7 @@ namespace Webly
             services.AddHangfireServer(options => options.SchedulePollingInterval = TimeSpan.FromSeconds(2));
 
             services.AddTransient<StringProcessorJob>();
+            services.AddScoped<IStringProcessorWithNotifications, StringProcessorWithNotifications>();
 
             services.AddSignalR();
 

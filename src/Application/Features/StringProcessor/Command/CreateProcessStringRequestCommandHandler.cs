@@ -2,33 +2,34 @@
 using Application.Abstractions.Data;
 using Domain.Procesor;
 using MediatR;
+using Shared;
 
 namespace Application.Features.StringProcessor.Command
 {
-    public sealed class CreateProcessStringRequestCommandHandler(IUserContext userContext,
-        IProcessStringRequestRepository processStringRequestRepository) : IRequestHandler<CreateProcessStringRequestCommand, bool>
+    public class CreateProcessStringRequestCommandHandler(IUserContext userContext,
+        IProcessStringRequestRepository processStringRequestRepository) : IRequestHandler<CreateProcessStringRequestCommand, Result>
     {
 
-        public async Task<bool> Handle(CreateProcessStringRequestCommand command, CancellationToken cancellationToken)
+        public async Task<Result> Handle(CreateProcessStringRequestCommand command, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrEmpty(command.Input))
-                return false;
 
-            if (userContext.UserId == Guid.Empty)
-                return false;
+            //check if user has any pending request
+            var request = await processStringRequestRepository.GetUnCompletedRequestByUserIdAsync
+                (userContext.UserId.ToString(), cancellationToken);
 
+            if (request != null || string.IsNullOrEmpty(command.Input) || userContext.UserId == Guid.Empty)
+                return Result.Failure(ProcessStringErrors.TooManyRequests);
 
-            var result = await processStringRequestRepository.CreateRequestAsync(new ProcessStringRequest
+            await processStringRequestRepository.CreateRequestAsync(new ProcessStringRequest
             {
                 Id = Guid.NewGuid().ToString(),
                 IsCompleted = false,
+                IsCancelled = false,
                 UserId = userContext.UserId.ToString(),
                 InputString = command.Input
             }, cancellationToken);
 
-
-            return result > 0 ? true : false;
-
+            return Result.Success();
         }
 
     }

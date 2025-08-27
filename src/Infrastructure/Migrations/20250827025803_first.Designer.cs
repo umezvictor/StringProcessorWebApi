@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250822135247_first")]
+    [Migration("20250827025803_first")]
     partial class first
     {
         /// <inheritdoc />
@@ -33,6 +33,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("InputString")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsCancelled")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("bit");

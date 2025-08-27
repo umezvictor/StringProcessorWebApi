@@ -1,11 +1,10 @@
-﻿using MediatR;
+﻿using Application.Idempotency;
+using MediatR;
+using Shared;
 
 namespace Application.Features.StringProcessor.Command
 {
-    public class CreateProcessStringRequestCommand : IRequest<bool>
-    {
-        public string Input { get; set; } = string.Empty;
+    public record CreateProcessStringRequestCommand(Guid RequestId, string Input) : IdempotentCommand(RequestId), IRequest<Result>;
 
 
-    }
 }

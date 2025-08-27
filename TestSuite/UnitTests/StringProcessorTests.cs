@@ -3,6 +3,7 @@ using Application.Abstractions.Data;
 using Application.Features.StringProcessor.Command;
 using Domain.Procesor;
 using Moq;
+using Shared;
 using Shouldly;
 
 namespace TestSuite.UnitTests
@@ -21,13 +22,31 @@ namespace TestSuite.UnitTests
             _serviceToTest = new CreateProcessStringRequestCommandHandler(_userContextMock.Object, repositoryMock.Object);
         }
 
+        /*
+         *  var request = await processStringRequestRepository.GetUnCompletedRequestByUserIdAsync
+                (userContext.UserId.ToString(), cancellationToken);
+
+            if (request != null || string.IsNullOrEmpty(command.Input) || userContext.UserId == Guid.Empty)
+                return Result.Failure(ProcessStringErrors.TooManyRequests);
+
+            await processStringRequestRepository.CreateRequestAsync(new ProcessStringRequest
+            {
+                Id = Guid.NewGuid().ToString(),
+                IsCompleted = false,
+                IsCancelled = false,
+                UserId = userContext.UserId.ToString(),
+                InputString = command.Input
+            }, cancellationToken);
+
+         */
+
 
         [Fact]
         public async Task Handle_WhenGivenValidRequest_ShouldReturnTrue()
         {
             var userId = Guid.NewGuid();
             var cancellationToken = CancellationToken.None;
-            var command = new CreateProcessStringRequestCommand { Input = "Hello World" };
+            var command = new CreateProcessStringRequestCommand(Guid.NewGuid(), "Hello World");
 
             _userContextMock.Setup(x => x.UserId).Returns(userId);
 
@@ -35,6 +54,7 @@ namespace TestSuite.UnitTests
             {
                 Id = Guid.NewGuid().ToString(),
                 IsCompleted = false,
+                IsCancelled = false,
                 UserId = userId.ToString(),
                 InputString = command.Input
             };
@@ -44,8 +64,8 @@ namespace TestSuite.UnitTests
             var result = await _serviceToTest.Handle(command, cancellationToken);
 
 
-            result.ShouldBeTrue();
-            result.ShouldBeOfType<bool>();
+            result.IsSuccess.ShouldBeTrue();
+            result.ShouldBeOfType<Result>();
         }
 
 
@@ -54,12 +74,15 @@ namespace TestSuite.UnitTests
         {
 
             var cancellationToken = CancellationToken.None;
-            var command = new CreateProcessStringRequestCommand { Input = "" };
+            var command = new CreateProcessStringRequestCommand(Guid.NewGuid(), "Hello World");
+
+            repositoryMock.Setup(x => x.GetUnCompletedRequestByUserIdAsync(It.IsAny<string>(), cancellationToken))
+                .ReturnsAsync(It.IsAny<ProcessStringRequest>());
 
             var result = await _serviceToTest.Handle(command, cancellationToken);
 
-            result.ShouldBeFalse();
-            result.ShouldBeOfType<bool>();
+            result.IsFailure.ShouldBeTrue();
+            result.ShouldBeOfType<Result>();
         }
 
 
@@ -68,13 +91,45 @@ namespace TestSuite.UnitTests
         {
 
             var cancellationToken = CancellationToken.None;
-            var command = new CreateProcessStringRequestCommand { Input = "Hello World" };
+            var command = new CreateProcessStringRequestCommand(Guid.NewGuid(), "Hello World");
+
             _userContextMock.Setup(x => x.UserId).Returns(Guid.Empty);
+
+            repositoryMock.Setup(x => x.GetUnCompletedRequestByUserIdAsync(It.IsAny<string>(), cancellationToken))
+                .ReturnsAsync(It.IsAny<ProcessStringRequest>());
+
 
             var result = await _serviceToTest.Handle(command, cancellationToken);
 
-            result.ShouldBeFalse();
-            result.ShouldBeOfType<bool>();
+            result.IsFailure.ShouldBeTrue();
+            result.ShouldBeOfType<Result>();
+        }
+
+
+        [Fact]
+        public async Task Handle_WhenUserIdHasPendingRequest_ShouldReturnFalse()
+        {
+
+            var cancellationToken = CancellationToken.None;
+            var command = new CreateProcessStringRequestCommand(Guid.NewGuid(), "Hello World");
+
+            var pendingRequest = new ProcessStringRequest
+            {
+                Id = Guid.NewGuid().ToString(),
+                InputString = "Hello",
+                IsCompleted = false,
+                IsCancelled = false,
+                UserId = Guid.NewGuid().ToString()
+            };
+
+            repositoryMock.Setup(x => x.GetUnCompletedRequestByUserIdAsync(It.IsAny<string>(),
+                cancellationToken)).ReturnsAsync(pendingRequest);
+
+
+            var result = await _serviceToTest.Handle(command, cancellationToken);
+
+            result.IsFailure.ShouldBeTrue();
+            result.ShouldBeOfType<Result>();
         }
     }
 }

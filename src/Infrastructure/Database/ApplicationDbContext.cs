@@ -1,9 +1,9 @@
 ﻿using Application.Abstractions.Data;
+using Domain.Idempotency;
 using Domain.Procesor;
 using Domain.Users;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Infrastructure.Database
 {
@@ -14,8 +14,7 @@ namespace Infrastructure.Database
 
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<ProcessStringRequest> ProcessStringRequests { get; set; }
-
-        public DatabaseFacade Database => base.Database;
+        public DbSet<IdempotencyRequest> IdempotencyRequest { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

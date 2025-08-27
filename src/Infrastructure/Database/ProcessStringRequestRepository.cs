@@ -16,7 +16,7 @@ namespace Infrastructure.Database
         public async Task<ProcessStringRequest?> GetUnCompletedRequestByUserIdAsync(string userId, CancellationToken? cancellationToken)
         {
             return await _context.ProcessStringRequests.
-                   Where(x => x.UserId == userId && x.IsCompleted == false).FirstOrDefaultAsync();
+                   Where(x => x.UserId == userId && x.IsCompleted == false && x.IsCancelled == false).FirstOrDefaultAsync();
         }
 
         public async Task UpdateAsync(ProcessStringRequest request, CancellationToken cancellationToken)

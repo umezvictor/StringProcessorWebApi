@@ -1,43 +1,33 @@
 ﻿using Application.Abstractions.Data;
 using Application.Abstractions.Services;
+using Domain.Procesor;
 using Hangfire;
 using Microsoft.AspNetCore.SignalR;
 using Webly.SignalRHub;
 
 namespace Webly.Jobs
 {
-    public class StringProcessorJob(ILogger<StringProcessorJob> logger,
-        IHubContext<NotificationHub, INotificationsClient> hubContext,
-        IProcessStringRequestRepository processStringRequestRepository, IStringProcessor stringProcessor)
+    public class StringProcessorJob(IStringProcessorWithNotifications processorWithNotifications, IStringProcessor stringProcessor,
+        IProcessStringRequestRepository processStringRequestRepository, IHubContext<NotificationHub, INotificationsClient> hubContext,
+        ILogger<StringProcessorJob> logger)
     {
-        [AutomaticRetry(Attempts = 5)]
+        [AutomaticRetry(Attempts = 5)] //todo
         public async Task ExecuteAsync(string userId, CancellationToken cancellationToken)
         {
 
+            ProcessStringRequest? request = null;
+
             try
             {
-
-                var request = await processStringRequestRepository.GetUnCompletedRequestByUserIdAsync(userId, cancellationToken);
-
+                request = await processStringRequestRepository.GetUnCompletedRequestByUserIdAsync(userId, cancellationToken);
                 if (request != null)
                 {
                     string processedString = stringProcessor.ProcessString(request.InputString);
-                    if (!string.IsNullOrEmpty(processedString))
+                    if (processedString != null)
                     {
-                        await hubContext.Clients.User(userId).MessageLength(processedString.Length);
-
-                        foreach (char character in processedString)
-                        {
-                            cancellationToken.ThrowIfCancellationRequested();
-                            await hubContext.Clients.User(userId).ReceiveNotification(character.ToString());
-                            await Task.Delay(1000, cancellationToken);
-                        }
+                        await processorWithNotifications.ProcessStringAndSendNotifications(processedString, userId, request, cancellationToken);
                         request.IsCompleted = true;
                         await processStringRequestRepository.UpdateAsync(request, cancellationToken);
-
-                        logger.LogInformation("Processing completed");
-                        await hubContext.Clients.User(userId).ProcessingCompleted();
-
                     }
                 }
 
@@ -45,10 +35,17 @@ namespace Webly.Jobs
             catch (OperationCanceledException)
             {
                 logger.LogInformation("User cancelled the operation");
+                if (request != null)
+                {
+                    request.IsCancelled = true;
+                    await processStringRequestRepository.UpdateAsync(request, CancellationToken.None);
+                }
                 await hubContext.Clients.User(userId).ProcessingCancelled();
 
             }
         }
+
+
 
     }
 }

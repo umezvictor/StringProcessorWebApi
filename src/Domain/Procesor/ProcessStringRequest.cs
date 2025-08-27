@@ -10,6 +10,7 @@ namespace Domain.Procesor
         public string InputString { get; set; } = string.Empty;
         public string UserId { get; set; } = string.Empty;
         public bool IsCompleted { get; set; }
+        public bool IsCancelled { get; set; }
 
     }
 }

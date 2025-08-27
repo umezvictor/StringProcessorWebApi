@@ -33,6 +33,7 @@ namespace Shared
             new(default, false, error);
     }
 
+    [Serializable]
     public class Result<TValue> : Result
     {
         private readonly TValue? _value;
