@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Shared;
 using Shared.Requests;
-using Webly.Jobs;
+using Webly.SignalR.Jobs;
 
 
 namespace Webly.Controllers

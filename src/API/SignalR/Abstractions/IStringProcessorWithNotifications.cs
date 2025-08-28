@@ -1,6 +1,6 @@
 ﻿using Domain.Procesor;
 
-namespace Webly.Jobs
+namespace Webly.SignalR.Abstractions
 {
     public interface IStringProcessorWithNotifications
     {

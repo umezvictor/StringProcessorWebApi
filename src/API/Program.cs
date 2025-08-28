@@ -3,7 +3,7 @@ using Infrastructure;
 using Infrastructure.Database;
 using Serilog;
 using Webly;
-using Webly.SignalRHub;
+using Webly.SignalR.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 

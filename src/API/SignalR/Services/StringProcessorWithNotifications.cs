@@ -1,8 +1,11 @@
 ﻿using Domain.Procesor;
 using Microsoft.AspNetCore.SignalR;
-using Webly.SignalRHub;
+using Webly.SignalR.Abstractions;
+using Webly.SignalR.CustomClients;
+using Webly.SignalR.Hubs;
+using Webly.SignalR.Jobs;
 
-namespace Webly.Jobs
+namespace Webly.SignalR.Services
 {
 
     public class StringProcessorWithNotifications(ILogger<StringProcessorJob> logger,

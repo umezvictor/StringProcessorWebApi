@@ -3,15 +3,17 @@ using Application.Abstractions.Services;
 using Domain.Procesor;
 using Hangfire;
 using Microsoft.AspNetCore.SignalR;
-using Webly.SignalRHub;
+using Webly.SignalR.Abstractions;
+using Webly.SignalR.CustomClients;
+using Webly.SignalR.Hubs;
 
-namespace Webly.Jobs
+namespace Webly.SignalR.Jobs
 {
     public class StringProcessorJob(IStringProcessorWithNotifications processorWithNotifications, IStringProcessor stringProcessor,
         IProcessStringRequestRepository processStringRequestRepository, IHubContext<NotificationHub, INotificationsClient> hubContext,
         ILogger<StringProcessorJob> logger)
     {
-        [AutomaticRetry(Attempts = 5)] //todo
+        [AutomaticRetry(Attempts = 5)]
         public async Task ExecuteAsync(string userId, CancellationToken cancellationToken)
         {
 

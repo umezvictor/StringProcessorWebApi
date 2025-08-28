@@ -8,8 +8,10 @@
     using Moq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Webly.Jobs;
-    using Webly.SignalRHub;
+    using Webly.SignalR.Abstractions;
+    using Webly.SignalR.CustomClients;
+    using Webly.SignalR.Hubs;
+    using Webly.SignalR.Jobs;
     using Xunit;
 
     public class StringProcessorJobTests
@@ -36,7 +38,14 @@
 
             // Arrange
             var userId = Guid.NewGuid().ToString();
-            var request = new ProcessStringRequest { Id = Guid.NewGuid().ToString(), UserId = userId, InputString = "Hello World", IsCompleted = false };
+            var request = new ProcessStringRequest
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserId = userId,
+                InputString = "Hello World",
+                IsCompleted = false
+            };
+
             var cancellationToken = CancellationToken.None;
 
             repositoryMock.Setup(x => x.GetUnCompletedRequestByUserIdAsync(userId, cancellationToken)).ReturnsAsync(request);
@@ -44,13 +53,12 @@
             _mockStringProcessor.Setup(sp => sp.ProcessString("Hello World"))
                                 .Returns("Processed string");
 
-            processorNotificationyMock.Setup(p => p.ProcessStringAndSendNotifications(It.IsAny<string>(), userId, request, It.IsAny<CancellationToken>()));
+            processorNotificationyMock.Setup(p => p.ProcessStringAndSendNotifications(It.IsAny<string>(), userId,
+                request, It.IsAny<CancellationToken>()));
 
 
             request.IsCompleted = true;
             repositoryMock.Setup(x => x.UpdateAsync(request, cancellationToken));
-
-
 
             // Act
             await _serviceToTest.ExecuteAsync(userId, cancellationToken);
@@ -58,7 +66,6 @@
             // Assert
             processorNotificationyMock.Verify(p => p.ProcessStringAndSendNotifications(It.IsAny<string>(), userId,
                 request, It.IsAny<CancellationToken>()), Times.Once);
-
 
         }
 
@@ -83,7 +90,8 @@
             repositoryMock.Setup(x => x.GetUnCompletedRequestByUserIdAsync(userId, cancellationToken)).ReturnsAsync(request);
 
 
-            processorNotificationyMock.Setup(p => p.ProcessStringAndSendNotifications(It.IsAny<string>(), userId, request, It.IsAny<CancellationToken>()))
+            processorNotificationyMock.Setup(p => p.ProcessStringAndSendNotifications(It.IsAny<string>(), userId, request,
+                It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new OperationCanceledException());
 
             _mockStringProcessor.Setup(sp => sp.ProcessString("Hello World"))

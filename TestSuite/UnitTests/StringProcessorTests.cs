@@ -22,25 +22,6 @@ namespace TestSuite.UnitTests
             _serviceToTest = new CreateProcessStringRequestCommandHandler(_userContextMock.Object, repositoryMock.Object);
         }
 
-        /*
-         *  var request = await processStringRequestRepository.GetUnCompletedRequestByUserIdAsync
-                (userContext.UserId.ToString(), cancellationToken);
-
-            if (request != null || string.IsNullOrEmpty(command.Input) || userContext.UserId == Guid.Empty)
-                return Result.Failure(ProcessStringErrors.TooManyRequests);
-
-            await processStringRequestRepository.CreateRequestAsync(new ProcessStringRequest
-            {
-                Id = Guid.NewGuid().ToString(),
-                IsCompleted = false,
-                IsCancelled = false,
-                UserId = userContext.UserId.ToString(),
-                InputString = command.Input
-            }, cancellationToken);
-
-         */
-
-
         [Fact]
         public async Task Handle_WhenGivenValidRequest_ShouldReturnTrue()
         {

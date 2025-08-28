@@ -1,4 +1,4 @@
-﻿namespace Webly.SignalRHub
+﻿namespace Webly.SignalR.CustomClients
 {
     public interface INotificationsClient
     {
